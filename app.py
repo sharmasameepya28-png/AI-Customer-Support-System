@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import sqlite3
+import os
 
 from ai_classifier import classify_ticket
 
@@ -18,6 +19,49 @@ def get_database_connection():
     connection.row_factory = sqlite3.Row
 
     return connection
+
+
+# ==================================================
+# INITIALIZE DATABASE
+# ==================================================
+
+def initialize_database():
+
+    connection = get_database_connection()
+
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS tickets (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            customer_name TEXT NOT NULL,
+
+            email TEXT NOT NULL,
+
+            problem TEXT NOT NULL,
+
+            category TEXT,
+
+            priority TEXT,
+
+            sentiment TEXT,
+
+            status TEXT,
+
+            suggested_response TEXT,
+
+            confidence REAL
+
+        )
+    """)
+
+    connection.commit()
+
+    connection.close()
+
+
+# Initialize database when application starts
+initialize_database()
 
 
 # ==================================================
@@ -498,6 +542,19 @@ def health_check():
 
 if __name__ == "__main__":
 
+    port = int(
+        os.environ.get(
+            "PORT",
+            5000
+        )
+    )
+
     app.run(
-        debug=True
+
+        host="0.0.0.0",
+
+        port=port,
+
+        debug=False
+
     )
