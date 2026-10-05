@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Customer Support</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+        }
+
+        .header {
+            background: #1f2937;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-top: 0;
+        }
+
+        label {
+            display: block;
+            margin-top: 18px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 130px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 13px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #result {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: #f1f5f9;
+            border-radius: 8px;
+        }
+
+        .result-item {
+            margin: 10px 0;
+        }
+
+        .label {
+            font-weight: bold;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <div class="header">
+
+        <h1>AI Customer Support</h1>
+
+        <p>Submit your issue and let AI analyze your ticket</p>
+
+    </div>
+
+
+    <div class="container">
+
+        <h2>Create Support Ticket</h2>
+
+
+        <form id="ticketForm">
+
+            <label>Customer Name</label>
+
+            <input
+                type="text"
+                id="customer_name"
+                placeholder="Enter your name"
+                required
+            >
+
+
+            <label>Email</label>
+
+            <input
+                type="email"
+                id="email"
+                placeholder="Enter your email"
+                required
+            >
+
+
+            <label>Problem</label>
+
+            <textarea
+                id="problem"
+                placeholder="Describe your problem..."
+                required
+            ></textarea>
+
+
+            <button type="submit">
+                Submit Ticket
+            </button>
+
+        </form>
+
+
+        <div id="result">
+
+            <h2>AI Analysis</h2>
+
+
+            <div class="result-item">
+
+                <span class="label">Ticket ID:</span>
+
+                <span id="ticketId"></span>
+
+            </div>
+
+
+            <div class="result-item">
+
+                <span class="label">Category:</span>
+
+                <span id="category"></span>
+
+            </div>
+
+
+            <div class="result-item">
+
+                <span class="label">Priority:</span>
+
+                <span id="priority"></span>
+
+            </div>
+
+
+            <div class="result-item">
+
+                <span class="label">Sentiment:</span>
+
+                <span id="sentiment"></span>
+
+            </div>
+
+
+            <div class="result-item">
+
+                <span class="label">Suggested Response:</span>
+
+                <p id="suggestedResponse"></p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+<script>
+
+document.getElementById("ticketForm").addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+
+    const customerName =
+        document.getElementById("customer_name").value;
+
+    const email =
+        document.getElementById("email").value;
+
+    const problem =
+        document.getElementById("problem").value;
+
+
+    const response = await fetch("/tickets", {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            customer_name: customerName,
+
+            email: email,
+
+            problem: problem
+
+        })
+
+    });
+
+
+    const data = await response.json();
+
+
+    if (response.ok) {
+
+        document.getElementById("result").style.display = "block";
+
+
+        document.getElementById("ticketId").textContent =
+            data.ticket_id;
+
+
+        document.getElementById("category").textContent =
+            data.ai_analysis.category;
+
+
+        document.getElementById("priority").textContent =
+            data.ai_analysis.priority;
+
+
+        document.getElementById("sentiment").textContent =
+            data.ai_analysis.sentiment;
+
+
+        document.getElementById("suggestedResponse").textContent =
+            data.ai_analysis.suggested_response;
+
+
+        document.getElementById("ticketForm").reset();
+
+    }
+
+    else {
+
+        alert(data.error || "Something went wrong.");
+
+    }
+
+});
+
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Support Dashboard</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+
+        body {
+            background: #f4f6f9;
+            color: #222;
+        }
+
+
+        header {
+            background: #1f2937;
+            color: white;
+            padding: 20px 30px;
+        }
+
+
+        header h1 {
+            margin-bottom: 5px;
+        }
+
+
+        header p {
+            color: #d1d5db;
+        }
+
+
+        .container {
+            width: 95%;
+            max-width: 1400px;
+            margin: 30px auto;
+        }
+
+
+        /* STATISTICS */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .card {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .card h3 {
+
+            color: #666;
+
+            font-size: 15px;
+
+            margin-bottom: 10px;
+        }
+
+
+        .card p {
+
+            font-size: 30px;
+
+            font-weight: bold;
+        }
+
+
+        /* CONTROLS */
+
+        .controls {
+
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            display: flex;
+
+            gap: 15px;
+
+            flex-wrap: wrap;
+        }
+
+
+        input,
+        select {
+
+            padding: 10px;
+
+            border:
+                1px solid #ccc;
+
+            border-radius: 6px;
+
+            font-size: 14px;
+        }
+
+
+        input {
+
+            flex: 1;
+
+            min-width: 250px;
+        }
+
+
+        /* TABLE */
+
+        .table-container {
+
+            background: white;
+
+            border-radius: 10px;
+
+            overflow-x: auto;
+
+            box-shadow:
+                0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+        }
+
+
+        th,
+        td {
+
+            padding: 14px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid #eee;
+        }
+
+
+        th {
+
+            background: #f8fafc;
+        }
+
+
+        tr:hover {
+
+            background: #f9fafb;
+        }
+
+
+        /* BADGES */
+
+        .badge {
+
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+
+            font-weight: bold;
+
+            display: inline-block;
+        }
+
+
+        .high {
+
+            background: #fee2e2;
+
+            color: #b91c1c;
+        }
+
+
+        .medium {
+
+            background: #fef3c7;
+
+            color: #92400e;
+        }
+
+
+        .low {
+
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        .open {
+
+            background: #dbeafe;
+
+            color: #1d4ed8;
+        }
+
+
+        .progress {
+
+            background: #fef3c7;
+
+            color: #92400e;
+        }
+
+
+        .closed {
+
+            background: #dcfce7;
+
+            color: #166534;
+        }
+
+
+        .negative {
+
+            color: #dc2626;
+
+            font-weight: bold;
+        }
+
+
+        .positive {
+
+            color: #16a34a;
+
+            font-weight: bold;
+        }
+
+
+        .neutral {
+
+            color: #666;
+        }
+
+
+        /* CONFIDENCE */
+
+        .confidence {
+
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+
+        /* BUTTON */
+
+        button {
+
+            border: none;
+
+            padding: 8px 12px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            background: #2563eb;
+
+            color: white;
+        }
+
+
+        button:hover {
+
+            background: #1d4ed8;
+        }
+
+
+        /* MODAL */
+
+        .modal {
+
+            display: none;
+
+            position: fixed;
+
+            z-index: 1000;
+
+            left: 0;
+
+            top: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            background:
+                rgba(0, 0, 0, 0.5);
+        }
+
+
+        .modal-content {
+
+            background: white;
+
+            width: 90%;
+
+            max-width: 650px;
+
+            margin: 80px auto;
+
+            padding: 25px;
+
+            border-radius: 10px;
+        }
+
+
+        .modal-content h2 {
+
+            margin-bottom: 20px;
+        }
+
+
+        .ticket-info {
+
+            margin-bottom: 15px;
+        }
+
+
+        .ticket-info strong {
+
+            display: inline-block;
+
+            width: 150px;
+        }
+
+
+        .response-box {
+
+            background: #f3f4f6;
+
+            padding: 15px;
+
+            border-radius: 8px;
+
+            margin-top: 15px;
+        }
+
+
+        .close {
+
+            float: right;
+
+            font-size: 25px;
+
+            cursor: pointer;
+        }
+
+
+        .status-control {
+
+            margin-top: 20px;
+
+            padding-top: 20px;
+
+            border-top:
+                1px solid #ddd;
+        }
+
+
+        .status-control select {
+
+            margin-right: 10px;
+        }
+
+
+        #message {
+
+            margin-top: 15px;
+
+            font-weight: bold;
+        }
+
+
+        /* RESPONSIVE */
+
+        @media (max-width: 1100px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .stats {
+
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <h1>
+        AI Customer Support Dashboard
+    </h1>
+
+    <p>
+        Manage and analyze customer support tickets
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+    <!-- =========================================
+         STATISTICS
+    ========================================== -->
+
+    <div class="stats">
+
+
+        <div class="card">
+
+            <h3>
+                Total Tickets
+            </h3>
+
+            <p id="totalTickets">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                High Priority
+            </h3>
+
+            <p id="highPriority">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Open Tickets
+            </h3>
+
+            <p id="openTickets">
+                0
+            </p>
+
+        </div>
+
+
+        <div class="card">
+
+            <h3>
+                Negative Sentiment
+            </h3>
+
+            <p id="negativeTickets">
+                0
+            </p>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================================
+         SEARCH AND FILTERS
+    ========================================== -->
+
+    <div class="controls">
+
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search customer, email or problem..."
+            onkeyup="filterTickets()"
+        >
+
+
+        <select
+            id="categoryFilter"
+            onchange="filterTickets()"
+        >
+
+            <option value="">
+                All Categories
+            </option>
+
+            <option value="Payment">
+                Payment
+            </option>
+
+            <option value="Account">
+                Account
+            </option>
+
+            <option value="Learning">
+                Learning
+            </option>
+
+            <option value="Technical">
+                Technical
+            </option>
+
+            <option value="General">
+                General
+            </option>
+
+        </select>
+
+
+        <select
+            id="priorityFilter"
+            onchange="filterTickets()"
+        >
+
+            <option value="">
+                All Priorities
+            </option>
+
+            <option value="High">
+                High
+            </option>
+
+            <option value="Medium">
+                Medium
+            </option>
+
+            <option value="Low">
+                Low
+            </option>
+
+        </select>
+
+
+        <select
+            id="statusFilter"
+            onchange="filterTickets()"
+        >
+
+            <option value="">
+                All Statuses
+            </option>
+
+            <option value="Open">
+                Open
+            </option>
+
+            <option value="In Progress">
+                In Progress
+            </option>
+
+            <option value="Closed">
+                Closed
+            </option>
+
+        </select>
+
+
+    </div>
+
+
+    <!-- =========================================
+         TICKET TABLE
+    ========================================== -->
+
+    <div class="table-container">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        ID
+                    </th>
+
+                    <th>
+                        Customer
+                    </th>
+
+                    <th>
+                        Email
+                    </th>
+
+                    <th>
+                        Category
+                    </th>
+
+                    <th>
+                        Priority
+                    </th>
+
+                    <th>
+                        Sentiment
+                    </th>
+
+                    <th>
+                        AI Confidence
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                    <th>
+                        Action
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="ticketTable">
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =========================================
+     TICKET DETAILS MODAL
+========================================== -->
+
+<div
+    id="ticketModal"
+    class="modal"
+>
+
+
+    <div class="modal-content">
+
+
+        <span
+            class="close"
+            onclick="closeModal()"
+        >
+            &times;
+        </span>
+
+
+        <h2>
+            Ticket Details
+        </h2>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Ticket ID:
+            </strong>
+
+            <span id="modalId"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Customer:
+            </strong>
+
+            <span id="modalCustomer"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Email:
+            </strong>
+
+            <span id="modalEmail"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Problem:
+            </strong>
+
+            <span id="modalProblem"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Category:
+            </strong>
+
+            <span id="modalCategory"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Priority:
+            </strong>
+
+            <span id="modalPriority"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                Sentiment:
+            </strong>
+
+            <span id="modalSentiment"></span>
+
+        </div>
+
+
+        <div class="ticket-info">
+
+            <strong>
+                AI Confidence:
+            </strong>
+
+            <span
+                id="modalConfidence"
+                class="confidence"
+            >
+            </span>
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="status-control">
+
+
+            <strong>
+                Update Status:
+            </strong>
+
+
+            <select id="modalStatus">
+
+                <option value="Open">
+                    Open
+                </option>
+
+                <option value="In Progress">
+                    In Progress
+                </option>
+
+                <option value="Closed">
+                    Closed
+                </option>
+
+            </select>
+
+
+            <button
+                onclick="updateStatus()"
+            >
+                Update Status
+            </button>
+
+
+            <div id="message"></div>
+
+
+        </div>
+
+
+        <!-- AI RESPONSE -->
+
+        <div class="response-box">
+
+
+            <strong>
+                AI Suggested Response
+            </strong>
+
+
+            <p id="modalResponse"></p>
+
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+// ================================================
+// GLOBAL VARIABLES
+// ================================================
+
+let allTickets = [];
+
+let selectedTicketId = null;
+
+
+// ================================================
+// LOAD TICKETS
+// ================================================
+
+async function loadTickets() {
+
+    try {
+
+        const response =
+            await fetch("/tickets");
+
+
+        allTickets =
+            await response.json();
+
+
+        displayTickets(allTickets);
+
+
+        updateStatistics(allTickets);
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error loading tickets:",
+            error
+        );
+
+    }
+
+}
+
+
+// ================================================
+// DISPLAY TICKETS
+// ================================================
+
+function displayTickets(tickets) {
+
+
+    const table =
+        document.getElementById(
+            "ticketTable"
+        );
+
+
+    table.innerHTML = "";
+
+
+    tickets.forEach(ticket => {
+
+
+        const row =
+            document.createElement("tr");
+
+
+        // PRIORITY CLASS
+
+        const priorityClass =
+            ticket.priority
+                ? ticket.priority.toLowerCase()
+                : "low";
+
+
+        // STATUS
+
+        const status =
+            ticket.status || "Open";
+
+
+        let statusClass = "open";
+
+
+        if (status === "In Progress") {
+
+            statusClass = "progress";
+
+        }
+
+        else if (status === "Closed") {
+
+            statusClass = "closed";
+
+        }
+
+
+        // SENTIMENT CLASS
+
+        const sentimentClass =
+            ticket.sentiment
+                ? ticket.sentiment.toLowerCase()
+                : "neutral";
+
+
+        // CONFIDENCE
+
+        let confidenceText = "N/A";
+
+
+        if (
+            ticket.confidence !== null &&
+            ticket.confidence !== undefined
+        ) {
+
+            confidenceText =
+                Math.round(
+                    Number(ticket.confidence) * 100
+                ) + "%";
+
+        }
+
+
+        row.innerHTML = `
+
+
+            <td>
+                ${ticket.id}
+            </td>
+
+
+            <td>
+                ${ticket.customer_name}
+            </td>
+
+
+            <td>
+                ${ticket.email}
+            </td>
+
+
+            <td>
+                ${ticket.category}
+            </td>
+
+
+            <td>
+
+                <span
+                    class="badge ${priorityClass}"
+                >
+
+                    ${ticket.priority}
+
+                </span>
+
+            </td>
+
+
+            <td
+                class="${sentimentClass}"
+            >
+
+                ${ticket.sentiment}
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="confidence"
+                >
+
+                    ${confidenceText}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <span
+                    class="badge ${statusClass}"
+                >
+
+                    ${status}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <button
+                    onclick="viewTicket(${ticket.id})"
+                >
+
+                    View
+
+                </button>
+
+            </td>
+
+
+        `;
+
+
+        table.appendChild(row);
+
+    });
+
+}
+
+
+// ================================================
+// STATISTICS
+// ================================================
+
+function updateStatistics(tickets) {
+
+
+    document.getElementById(
+        "totalTickets"
+    ).textContent =
+        tickets.length;
+
+
+    document.getElementById(
+        "highPriority"
+    ).textContent =
+
+        tickets.filter(ticket =>
+
+            ticket.priority === "High"
+
+        ).length;
+
+
+    document.getElementById(
+        "openTickets"
+    ).textContent =
+
+        tickets.filter(ticket =>
+
+            !ticket.status ||
+            ticket.status === "Open"
+
+        ).length;
+
+
+    document.getElementById(
+        "negativeTickets"
+    ).textContent =
+
+        tickets.filter(ticket =>
+
+            ticket.sentiment === "Negative"
+
+        ).length;
+
+}
+
+
+// ================================================
+// SEARCH AND FILTER
+// ================================================
+
+function filterTickets() {
+
+
+    const search =
+
+        document
+            .getElementById("search")
+            .value
+            .toLowerCase();
+
+
+    const category =
+
+        document
+            .getElementById("categoryFilter")
+            .value;
+
+
+    const priority =
+
+        document
+            .getElementById("priorityFilter")
+            .value;
+
+
+    const status =
+
+        document
+            .getElementById("statusFilter")
+            .value;
+
+
+    const filtered =
+
+        allTickets.filter(ticket => {
+
+
+            const ticketStatus =
+                ticket.status || "Open";
+
+
+            const customerName =
+                ticket.customer_name
+                    ? ticket.customer_name.toLowerCase()
+                    : "";
+
+
+            const email =
+                ticket.email
+                    ? ticket.email.toLowerCase()
+                    : "";
+
+
+            const problem =
+                ticket.problem
+                    ? ticket.problem.toLowerCase()
+                    : "";
+
+
+            const matchesSearch =
+
+                customerName.includes(search) ||
+
+                email.includes(search) ||
+
+                problem.includes(search);
+
+
+            const matchesCategory =
+
+                !category ||
+                ticket.category === category;
+
+
+            const matchesPriority =
+
+                !priority ||
+                ticket.priority === priority;
+
+
+            const matchesStatus =
+
+                !status ||
+                ticketStatus === status;
+
+
+            return (
+
+                matchesSearch &&
+
+                matchesCategory &&
+
+                matchesPriority &&
+
+                matchesStatus
+
+            );
+
+        });
+
+
+    displayTickets(filtered);
+
+}
+
+
+// ================================================
+// VIEW ONE TICKET
+// ================================================
+
+async function viewTicket(id) {
+
+
+    try {
+
+
+        const response =
+
+            await fetch(
+                `/tickets/${id}`
+            );
+
+
+        const ticket =
+            await response.json();
+
+
+        selectedTicketId = id;
+
+
+        document.getElementById(
+            "modalId"
+        ).textContent =
+            ticket.id;
+
+
+        document.getElementById(
+            "modalCustomer"
+        ).textContent =
+            ticket.customer_name;
+
+
+        document.getElementById(
+            "modalEmail"
+        ).textContent =
+            ticket.email;
+
+
+        document.getElementById(
+            "modalProblem"
+        ).textContent =
+            ticket.problem;
+
+
+        document.getElementById(
+            "modalCategory"
+        ).textContent =
+            ticket.category;
+
+
+        document.getElementById(
+            "modalPriority"
+        ).textContent =
+            ticket.priority;
+
+
+        document.getElementById(
+            "modalSentiment"
+        ).textContent =
+            ticket.sentiment;
+
+
+        // AI CONFIDENCE
+
+        if (
+            ticket.confidence !== null &&
+            ticket.confidence !== undefined
+        ) {
+
+            document.getElementById(
+                "modalConfidence"
+            ).textContent =
+
+                Math.round(
+                    Number(ticket.confidence) * 100
+                ) + "%";
+
+        }
+
+        else {
+
+            document.getElementById(
+                "modalConfidence"
+            ).textContent =
+                "N/A";
+
+        }
+
+
+        document.getElementById(
+            "modalResponse"
+        ).textContent =
+            ticket.suggested_response;
+
+
+        document.getElementById(
+            "modalStatus"
+        ).value =
+            ticket.status || "Open";
+
+
+        document.getElementById(
+            "message"
+        ).textContent = "";
+
+
+        document.getElementById(
+            "ticketModal"
+        ).style.display =
+            "block";
+
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "Error loading ticket:",
+            error
+        );
+
+    }
+
+}
+
+
+// ================================================
+// UPDATE STATUS
+// ================================================
+
+async function updateStatus() {
+
+
+    if (!selectedTicketId) {
+
+        return;
+
+    }
+
+
+    const newStatus =
+
+        document
+            .getElementById("modalStatus")
+            .value;
+
+
+    try {
+
+
+        const response =
+
+            await fetch(
+
+                `/tickets/${selectedTicketId}`,
+
+                {
+
+                    method: "PUT",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body: JSON.stringify({
+
+                        status:
+                            newStatus,
+
+                        priority:
+                            document
+                                .getElementById(
+                                    "modalPriority"
+                                )
+                                .textContent
+
+                    })
+
+                }
+
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if (response.ok) {
+
+
+            document.getElementById(
+                "message"
+            ).textContent =
+
+                "Status updated successfully!";
+
+
+            document.getElementById(
+                "message"
+            ).style.color =
+                "green";
+
+
+            await loadTickets();
+
+
+        }
+
+        else {
+
+
+            document.getElementById(
+                "message"
+            ).textContent =
+
+                result.error ||
+                "Failed to update status.";
+
+
+            document.getElementById(
+                "message"
+            ).style.color =
+                "red";
+
+        }
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(error);
+
+
+        document.getElementById(
+            "message"
+        ).textContent =
+
+            "Server error. Please try again.";
+
+
+        document.getElementById(
+            "message"
+        ).style.color =
+            "red";
+
+    }
+
+}
+
+
+// ================================================
+// CLOSE MODAL
+// ================================================
+
+function closeModal() {
+
+
+    document.getElementById(
+        "ticketModal"
+    ).style.display =
+        "none";
+
+}
+
+
+// ================================================
+// CLOSE MODAL WHEN CLICKING OUTSIDE
+// ================================================
+
+window.onclick = function(event) {
+
+
+    const modal =
+        document.getElementById(
+            "ticketModal"
+        );
+
+
+    if (event.target === modal) {
+
+        modal.style.display =
+            "none";
+
+    }
+
+};
+
+
+// ================================================
+// LOAD TICKETS WHEN PAGE OPENS
+// ================================================
+
+loadTickets();
+
+
+</script>
+
+
+</body>
+
+</html>
